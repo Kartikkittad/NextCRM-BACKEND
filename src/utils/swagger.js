@@ -202,7 +202,7 @@ const swaggerSpec = {
 export default function setupSwagger(app) {
   const options = {
     customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "SmartCRM API Docs",
+    customSiteTitle: "NextCRM API Docs",
     swaggerOptions: {
       url: "/api/docs.json",
     },
