@@ -1,38 +1,204 @@
-import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 
-const serverUrl = process.env.BASE_URL;
+const BASE_URL = process.env.BASE_URL;
 
-const options = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "SmartCRM API",
-      version: "1.0.0",
-      description: "API documentation for SmartCRM backend",
+const swaggerSpec = {
+  openapi: "3.0.0",
+  info: {
+    title: "SmartCRM API",
+    version: "1.0.0",
+    description: "Backend APIs for SmartCRM",
+  },
+
+  servers: [
+    {
+      url: BASE_URL,
     },
-    servers: [
-      {
-        url: serverUrl,
-        description: "Local server",
+  ],
+
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
       },
-      {
-        url: serverUrl,
-        description: "Production server",
+    },
+    schemas: {
+      LoginRequest: {
+        type: "object",
+        required: ["email", "password"],
+        properties: {
+          email: { type: "string", example: "sales@smartcrm.com" },
+          password: { type: "string", example: "Sales@123" },
+        },
       },
-    ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
+
+      User: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          name: { type: "string" },
+          email: { type: "string" },
+          role: { type: "string", example: "SALES" },
+        },
+      },
+
+      Lead: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          name: { type: "string" },
+          email: { type: "string" },
+          status: { type: "string", example: "NEW" },
+          assignedTo: { type: "string" },
         },
       },
     },
-    security: [{ bearerAuth: [] }],
   },
-  apis: ["./src/routes/*.js"], // where swagger comments live
+
+  security: [{ bearerAuth: [] }],
+
+  tags: [
+    { name: "Auth" },
+    { name: "Users" },
+    { name: "Leads" },
+    { name: "Pipeline" },
+    { name: "Dashboard" },
+  ],
+
+  paths: {
+    "/api/auth/login": {
+      post: {
+        summary: "Login user",
+        tags: ["Auth"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/LoginRequest" },
+            },
+          },
+        },
+        responses: {
+          200: { description: "Login successful" },
+          401: { description: "Invalid credentials" },
+        },
+      },
+    },
+
+    "/api/users": {
+      post: {
+        summary: "Create user (Admin only)",
+        tags: ["Users"],
+        responses: {
+          201: { description: "User created" },
+        },
+      },
+      get: {
+        summary: "Get all users (Admin only)",
+        tags: ["Users"],
+        responses: {
+          200: { description: "List of users" },
+        },
+      },
+    },
+
+    "/api/leads": {
+      post: {
+        summary: "Create lead",
+        tags: ["Leads"],
+        responses: {
+          201: { description: "Lead created" },
+        },
+      },
+      get: {
+        summary: "Get all leads",
+        tags: ["Leads"],
+        responses: {
+          200: { description: "Paginated leads list" },
+        },
+      },
+    },
+
+    "/api/leads/{id}": {
+      get: {
+        summary: "Get lead by ID",
+        tags: ["Leads"],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
+        ],
+        responses: {
+          200: { description: "Lead details" },
+        },
+      },
+      patch: {
+        summary: "Update lead",
+        tags: ["Leads"],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
+        ],
+        responses: {
+          200: { description: "Lead updated" },
+        },
+      },
+      delete: {
+        summary: "Delete lead",
+        tags: ["Leads"],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
+        ],
+        responses: {
+          200: { description: "Lead deleted" },
+        },
+      },
+    },
+
+    "/api/leads/{id}/status": {
+      patch: {
+        summary: "Update lead status",
+        tags: ["Pipeline"],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
+        ],
+        responses: {
+          200: { description: "Status updated" },
+        },
+      },
+    },
+
+    "/api/dashboard/metrics": {
+      get: {
+        summary: "Dashboard metrics",
+        tags: ["Dashboard"],
+        responses: {
+          200: { description: "Dashboard KPIs" },
+        },
+      },
+    },
+  },
 };
 
-const swaggerSpec = swaggerJSDoc(options);
-export default swaggerSpec;
+export default function setupSwagger(app) {
+  app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
