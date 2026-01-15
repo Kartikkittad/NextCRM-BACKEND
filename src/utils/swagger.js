@@ -5,9 +5,9 @@ const BASE_URL = process.env.BASE_URL;
 const swaggerSpec = {
   openapi: "3.0.0",
   info: {
-    title: "SmartCRM API",
+    title: "NextCRM API",
     version: "1.0.0",
-    description: "Backend APIs for SmartCRM",
+    description: "Backend APIs for NextCRM",
   },
 
   servers: [

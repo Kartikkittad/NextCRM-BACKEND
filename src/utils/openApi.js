@@ -3,9 +3,9 @@ const BASE_URL = process.env.BASE_URL;
 const openApiSpec = {
   openapi: "3.0.0",
   info: {
-    title: "SmartCRM API",
+    title: "NextCRM API",
     version: "1.0.0",
-    description: "Backend APIs for SmartCRM SaaS CRM Platform",
+    description: "Backend APIs for NextCRM SaaS CRM Platform",
   },
   servers: [
     {
