@@ -218,7 +218,7 @@ export default function setupSwagger(app) {
       <html lang="en">
         <head>
           <meta charset="UTF-8">
-          <title>SmartCRM API</title>
+          <title>NextCRM API</title>
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.5/swagger-ui.min.css" />
         </head>
         <body>
