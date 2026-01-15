@@ -4,7 +4,7 @@ import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import leadRoutes from "./routes/lead.routes.js";
-import setupSwagger from "./utils/swagger.js";
+import swaggerUi from "swagger-ui-express";
 
 const swaggerUiAssets = swaggerUi.serveFiles(swaggerSpec);
 
