@@ -200,5 +200,46 @@ const swaggerSpec = {
 };
 
 export default function setupSwagger(app) {
-  app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  const options = {
+    customCss: ".swagger-ui .topbar { display: none }",
+    customSiteTitle: "SmartCRM API Docs",
+    swaggerOptions: {
+      url: "/api/docs.json",
+    },
+  };
+
+  app.get("/api/docs.json", (req, res) => {
+    res.json(swaggerSpec);
+  });
+
+  app.get("/api/docs", (req, res) => {
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <title>SmartCRM API</title>
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.5/swagger-ui.min.css" />
+        </head>
+        <body>
+          <div id="swagger-ui"></div>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.5/swagger-ui-bundle.min.js"></script>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.5/swagger-ui-standalone-preset.min.js"></script>
+          <script>
+            window.onload = function() {
+              window.ui = SwaggerUIBundle({
+                url: "/api/docs.json",
+                dom_id: '#swagger-ui',
+                presets: [
+                  SwaggerUIBundle.presets.apis,
+                  SwaggerUIStandalonePreset
+                ],
+                layout: "StandaloneLayout"
+              });
+            };
+          </script>
+        </body>
+      </html>
+    `);
+  });
 }
