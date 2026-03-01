@@ -189,10 +189,20 @@ const swaggerSpec = {
 
     "/api/dashboard/metrics": {
       get: {
-        summary: "Dashboard metrics",
+        summary: "Get detailed dashboard metrics",
         tags: ["Dashboard"],
+        security: [{ bearerAuth: [] }],
         responses: {
-          200: { description: "Dashboard KPIs" },
+          200: {
+            description: "Dashboard metrics data",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                },
+              },
+            },
+          },
         },
       },
     },
